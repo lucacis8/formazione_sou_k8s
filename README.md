@@ -65,8 +65,8 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 
 ### Configurazione della pipeline Jenkins
 
-1. Crea un nuovo progetto pipeline sulla dashboard di Jenkins.
-2. Configura il progetto per utilizzare il repository GitHub:
+1. Crea un nuovo elemento pipeline sulla dashboard di Jenkins e chiamalo **flask-app-example-build**.
+2. Configura l'elemento per utilizzare il repository GitHub:
 - Inserisci come URL di Deposito il link del repository GitHub.
 - Usa le credenziali github_credentials configurate in precedenza.
 - Come Ramo indicare */main.
