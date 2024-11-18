@@ -2,13 +2,12 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('dockerhub-credentials') // Assicurati di avere le credenziali di DockerHub salvate in Jenkins
-        REGISTRY_URL = "https://index.docker.io/v1/"
         DOCKER_IMAGE = "lucacisotto/flask-app-example"
+        DOCKER_TAG = "v1.0"
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
@@ -17,26 +16,10 @@ pipeline {
         stage('Determine Tag') {
             steps {
                 script {
-                    // Determina il tag da usare in base al branch o al tag Git
-                    def tag
-                    try {
-                        // Controlliamo se esiste un tag Git
-                        tag = sh(script: 'git describe --tags', returnStdout: true).trim()
-                    } catch (Exception e) {
-                        // Se non esiste un tag, prendiamo il branch e il commit hash
-                        def branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                        def shortCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-
-                        if (branchName == 'master') {
-                            tag = 'latest'
-                        } else if (branchName == 'develop') {
-                            tag = "develop-${shortCommit}"
-                        } else {
-                            tag = "HEAD-${shortCommit}"
-                        }
-                    }
-                    env.TAG = tag
-                    echo "Building Docker image with tag: ${env.TAG}"
+                    // Usa git per determinare il tag
+                    def tag = sh(script: "git describe --tags", returnStdout: true).trim()
+                    env.DOCKER_TAG = tag
+                    echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                 }
             }
         }
@@ -44,21 +27,22 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build dell'immagine Docker con il tag determinato
-                    sh "docker build -t ${DOCKER_IMAGE}:${env.TAG} ."
+                    // Costruisci l'immagine Docker
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    // Pusha l'immagine Docker sul DockerHub con il tag
-                    docker.withRegistry(REGISTRY_URL, DOCKER_CREDENTIALS) {
-                        sh "docker push ${DOCKER_IMAGE}:${env.TAG}"
-                        if (env.TAG == 'latest') {
-                            sh "docker push ${DOCKER_IMAGE}:latest"
-                        }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', 
+                                                   usernameVariable: 'DOCKER_USERNAME', 
+                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        // Esegui il login su Docker Hub
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                        // Esegui il push dell'immagine Docker
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
             }
@@ -67,13 +51,16 @@ pipeline {
 
     post {
         always {
+            // Pulisce lo workspace dopo ogni build
             cleanWs()
         }
+
         success {
-            echo 'Pipeline completed successfully!'
+            echo "Build and push completed successfully!"
         }
+
         failure {
-            echo 'Pipeline failed!'
+            echo "Build or push failed!"
         }
     }
 }
