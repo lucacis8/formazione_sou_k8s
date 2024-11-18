@@ -19,9 +19,11 @@ pipeline {
                 script {
                     // Determina il tag da usare in base al branch o al tag Git
                     def tag
-                    if (gitDescribeTags(returnStdout: true).trim()) {
-                        tag = gitDescribeTags(returnStdout: true).trim()
-                    } else {
+                    try {
+                        // Controlliamo se esiste un tag Git
+                        tag = sh(script: 'git describe --tags', returnStdout: true).trim()
+                    } catch (Exception e) {
+                        // Se non esiste un tag, prendiamo il branch e il commit hash
                         def branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
                         def shortCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
 
