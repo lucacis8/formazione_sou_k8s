@@ -24,6 +24,43 @@ pipeline {
             }
         }
 
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    // Login a Docker Hub utilizzando le credenziali di Jenkins
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
+                    }
+                }
+            }
+        }
+
+        stage('Check and Create Docker Repository') {
+            steps {
+                script {
+                    // Verifica se il repository esiste già su Docker Hub usando l'API
+                    def repoCheck = sh(script: """
+                        curl -s -u \$DOCKER_USERNAME:\$DOCKER_PASSWORD https://hub.docker.com/v2/repositories/\$DOCKER_USERNAME/\$DOCKER_IMAGE/ > response.json
+                        jq -e .results > /dev/null 2>&1 < response.json
+                        echo \$?
+                    """, returnStdout: true).trim()
+
+                    // Se il repository non esiste (exit code 1), crealo
+                    if (repoCheck == '1') {
+                        echo "Repository does not exist, creating it."
+                        sh """
+                            curl -X POST -u \$DOCKER_USERNAME:\$DOCKER_PASSWORD \
+                            -H "Content-Type: application/json" \
+                            -d '{"name": "\$DOCKER_IMAGE"}' \
+                            https://hub.docker.com/v2/repositories/
+                        """
+                    } else {
+                        echo "Repository already exists."
+                    }
+                }
+            }
+        }
+
         stage('Build and Push Docker Image') {
             steps {
                 script {
