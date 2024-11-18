@@ -1,54 +1,77 @@
 pipeline {
     agent any
+
     environment {
-        DOCKER_IMAGE = 'lucacisotto/flask-app-example'
-        REGISTRY_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials') // Assicurati di avere le credenziali di DockerHub salvate in Jenkins
+        REGISTRY_URL = "https://index.docker.io/v1/"
+        DOCKER_IMAGE = "lucacisotto/flask-app-example"
     }
+
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
                 checkout scm
             }
         }
+
         stage('Determine Tag') {
             steps {
                 script {
-                    def gitTag = sh(script: 'git describe --tags --exact-match || echo ""', returnStdout: true).trim()
-                    def branch = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                    def commit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    
-                    if (gitTag) {
-                        env.DOCKER_TAG = gitTag
-                    } else if (branch == 'main') {
-                        env.DOCKER_TAG = 'latest'
-                    } else if (branch == 'develop') {
-                        env.DOCKER_TAG = "develop-${commit}"
+                    // Determina il tag da usare in base al branch o al tag Git
+                    def tag
+                    if (gitDescribeTags(returnStdout: true).trim()) {
+                        tag = gitDescribeTags(returnStdout: true).trim()
                     } else {
-                        error("Unable to determine Docker tag. Please check the branch or tags.")
+                        def branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+                        def shortCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+
+                        if (branchName == 'master') {
+                            tag = 'latest'
+                        } else if (branchName == 'develop') {
+                            tag = "develop-${shortCommit}"
+                        } else {
+                            tag = "HEAD-${shortCommit}"
+                        }
                     }
-                    
-                    echo "Building Docker image with tag: ${env.DOCKER_TAG}"
+                    env.TAG = tag
+                    echo "Building Docker image with tag: ${env.TAG}"
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                script {
+                    // Build dell'immagine Docker con il tag determinato
+                    sh "docker build -t ${DOCKER_IMAGE}:${env.TAG} ."
+                }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', REGISTRY_CREDENTIALS) {
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // Pusha l'immagine Docker sul DockerHub con il tag
+                    docker.withRegistry(REGISTRY_URL, DOCKER_CREDENTIALS) {
+                        sh "docker push ${DOCKER_IMAGE}:${env.TAG}"
+                        if (env.TAG == 'latest') {
+                            sh "docker push ${DOCKER_IMAGE}:latest"
+                        }
                     }
                 }
             }
         }
     }
+
     post {
         always {
             cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
