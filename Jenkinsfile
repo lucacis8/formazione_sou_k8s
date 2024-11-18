@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = "lucacisotto/flask-app-example"
         DOCKER_TAG = "v1.0"
+        DOCKER_USERNAME = "lucacisotto" // Assicurati che questo valore sia corretto
+        DOCKER_PASSWORD = credentials('dockerhub-credentials') // Credenziali salvate in Jenkins
     }
 
     stages {
@@ -27,8 +29,8 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    // Login a Docker Hub utilizzando le credenziali di Jenkins
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Esegui il login a Docker Hub
                         sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
                     }
                 }
@@ -38,6 +40,11 @@ pipeline {
         stage('Check and Create Docker Repository') {
             steps {
                 script {
+                    // Verifica che le variabili siano valorizzate
+                    if (!env.DOCKER_USERNAME || !env.DOCKER_IMAGE) {
+                        error "Docker username or image name is not set!"
+                    }
+
                     // Verifica se il repository esiste già su Docker Hub usando l'API
                     def repoCheck = sh(script: """
                         curl -s -u \$DOCKER_USERNAME:\$DOCKER_PASSWORD https://hub.docker.com/v2/repositories/\$DOCKER_USERNAME/\$DOCKER_IMAGE/ > response.json
