@@ -24,26 +24,38 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
-                    // Costruisci l'immagine Docker
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', 
-                                                   usernameVariable: 'DOCKER_USERNAME', 
-                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
-                    script {
-                        // Esegui il login su Docker Hub
-                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                        // Esegui il push dell'immagine Docker
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // Funzione per costruire e fare il push dell'immagine Docker
+                    def buildAndPushTag = { Map args ->
+                        def defaults = [
+                            registryUrl: 'https://index.docker.io/v1/',  // URL del registro Docker, come Docker Hub
+                            dockerfileDir: "./",
+                            dockerfileName: "Dockerfile",
+                            buildArgs: "",
+                            pushLatest: true
+                        ]
+                        args = defaults + args
+                        docker.withRegistry(args.registryUrl) {
+                            def image = docker.build(args.image, "${args.buildArgs} ${args.dockerfileDir} -f ${args.dockerfileName}")
+                            image.push(args.buildTag)
+                            if (args.pushLatest) {
+                                image.push("latest")
+                                sh "docker rmi --force ${args.image}:latest"
+                            }
+                            sh "docker rmi --force ${args.image}:${args.buildTag}"
+                            return "${args.image}:${args.buildTag}"
+                        }
                     }
+
+                    // Chiamata alla funzione con i parametri specifici per la build e il push
+                    buildAndPushTag(
+                        image: "${DOCKER_IMAGE}",       // Nome dell'immagine Docker
+                        buildTag: "${DOCKER_TAG}",      // Tag dell'immagine Docker
+                        buildArgs: "",                 // Argomenti di build, se necessari
+                        pushLatest: true               // Se fare anche il push dell'immagine con tag "latest"
+                    )
                 }
             }
         }
