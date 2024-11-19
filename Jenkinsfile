@@ -24,8 +24,8 @@ pipeline {
                         commitTag = ''
                     }
 
+                    // Se il commit ha un tag, uso quel tag
                     if (commitTag) {
-                        // Se il commit ha un tag, uso quel tag
                         env.TAG = commitTag
                     } else if (branch == 'main') {
                         // Se siamo nel branch 'main', uso 'latest'
