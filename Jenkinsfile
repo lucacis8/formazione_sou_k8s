@@ -8,14 +8,24 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                // Checkout completo per garantire branch locali
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '**']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'LocalBranch']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/lucacis8/formazione_sou_k8s',
+                        credentialsId: 'github-credentials'
+                    ]]
+                ])
             }
         }
 
         stage('Determine Tag') {
             steps {
                 script {
-                    // Determina il tag Git, il branch corrente e il commit SHA
+                    // Determina il tag Git, branch corrente e SHA
                     def gitTag = sh(script: "git describe --tags --exact-match || echo 'no-tag'", returnStdout: true).trim()
                     def gitBranch = sh(script: "git symbolic-ref --short HEAD || echo 'detached'", returnStdout: true).trim()
                     def gitCommit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
@@ -26,8 +36,11 @@ pipeline {
                     } else if (gitBranch == 'main' || gitBranch == 'master') {
                         // Usa 'latest' per il branch main o master
                         env.IMAGE_TAG = "latest"
+                    } else if (gitBranch == 'detached') {
+                        // Usa SHA per modalità detached HEAD
+                        env.IMAGE_TAG = "commit-${gitCommit}"
                     } else {
-                        // Usa il nome del branch e SHA per altri branch
+                        // Usa branch e SHA per altri branch
                         env.IMAGE_TAG = "${gitBranch}-${gitCommit}"
                     }
 
