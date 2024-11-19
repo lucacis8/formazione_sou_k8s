@@ -19,7 +19,7 @@ pipeline {
                 script {
                     // Controlla se il branch è "main", se sì, usa "latest"
                     def tag = ''
-                    if (GIT_BRANCH_NAME == 'main') {
+                    if (GIT_BRANCH_NAME == 'HEAD') {
                         tag = "latest"
                     } else {
                         // Per altre branch, usa il nome del branch
