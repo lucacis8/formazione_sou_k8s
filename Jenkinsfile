@@ -16,7 +16,7 @@ pipeline {
                     // Recupera il tag del commit, se esiste
                     def gitTag = sh(script: 'git describe --tags --exact-match || echo ""', returnStdout: true).trim()
                     // Ottieni il nome del branch
-                    def branch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def branch = sh(script: "git symbolic-ref --short HEAD || echo 'detached'", returnStdout: true).trim()
                     // Ottieni l'SHA abbreviato del commit
                     def commitSha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
 
@@ -30,6 +30,9 @@ pipeline {
                     } else if (branch == "develop") {
                         // Usa "develop-<sha>" per il branch "develop"
                         env.TAG = "develop-${commitSha}"
+                    } else if (branch == "detached") {
+                        // Gestisce lo stato 'detached HEAD'
+                        env.TAG = "detached-${commitSha}"
                     } else {
                         // Usa "<branch>-<sha>" per tutti gli altri branch
                         env.TAG = "${branch}-${commitSha}"
