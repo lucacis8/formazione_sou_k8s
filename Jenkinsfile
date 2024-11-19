@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_TAG = '' // Variabile Docker Tag inizializzata vuota
-        DOCKER_IMAGE = 'my-flask-app' // Nome base dell'immagine Docker
+        DOCKER_IMAGE = "lucacisotto/flask-app-example-build"
+        DOCKER_TAG = "v1.0"
     }
 
     stages {
@@ -16,9 +16,10 @@ pipeline {
         stage('Determine Tag') {
             steps {
                 script {
-                    // Ottieni il tag Git o imposta un valore predefinito
-                    DOCKER_TAG = sh(script: "git describe --exact-match --tags || echo 'latest'", returnStdout: true).trim()
-                    echo "Building Docker image with tag: ${DOCKER_TAG}"
+                    // Usa git per determinare il tag
+                    def tag = sh(script: "git describe --tags", returnStdout: true).trim()
+                    env.DOCKER_TAG = tag
+                    echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                 }
             }
         }
@@ -26,18 +27,22 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                    echo "Docker image built: ${dockerImage.id}"
+                    // Costruisci l'immagine Docker
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub_credentials') {
-                        dockerImage.push("${DOCKER_TAG}")
-                        echo "Docker image pushed with tag: ${DOCKER_TAG}"
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', 
+                                                   usernameVariable: 'DOCKER_USERNAME', 
+                                                   passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        // Esegui il login su Docker Hub
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                        // Esegui il push dell'immagine Docker
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
             }
@@ -46,11 +51,14 @@ pipeline {
 
     post {
         always {
+            // Pulisce lo workspace dopo ogni build
             cleanWs()
         }
+
         success {
-            echo "Pipeline completed successfully!"
+            echo "Build and push completed successfully!"
         }
+
         failure {
             echo "Build or push failed!"
         }
