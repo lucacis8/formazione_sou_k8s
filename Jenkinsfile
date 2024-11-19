@@ -1,73 +1,54 @@
 pipeline {
     agent any
-
     environment {
-        DOCKER_REPO = "lucacisotto/flask-app-example"
+        GIT_BRANCH_NAME = '' // Variabile per memorizzare il nome del branch
     }
-
     stages {
         stage('Checkout SCM') {
             steps {
-                // Checkout completo per garantire branch locali
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '**']],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'LocalBranch']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/lucacis8/formazione_sou_k8s',
-                        credentialsId: 'github-credentials'
-                    ]]
-                ])
-            }
-        }
-
-        stage('Determine Tag') {
-            steps {
+                checkout scm
                 script {
-                    // Determina il tag Git, branch corrente e SHA
-                    def gitTag = sh(script: "git describe --tags --exact-match || echo 'no-tag'", returnStdout: true).trim()
-                    def gitBranch = sh(script: "git symbolic-ref --short HEAD || echo 'detached'", returnStdout: true).trim()
-                    def gitCommit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-
-                    if (gitTag != 'no-tag') {
-                        // Usa il tag Git esatto se disponibile
-                        env.IMAGE_TAG = gitTag
-                    } else if (gitBranch == 'main' || gitBranch == 'master') {
-                        // Usa 'latest' per il branch main o master
-                        env.IMAGE_TAG = "latest"
-                    } else if (gitBranch == 'detached') {
-                        // Usa SHA per modalità detached HEAD
-                        env.IMAGE_TAG = "commit-${gitCommit}"
-                    } else {
-                        // Usa branch e SHA per altri branch
-                        env.IMAGE_TAG = "${gitBranch}-${gitCommit}"
-                    }
-
-                    // Stampa i tag generati
-                    echo "Using Docker image tag: ${env.IMAGE_TAG}"
+                    // Memorizza il nome del branch corrente
+                    GIT_BRANCH_NAME = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
                 }
             }
         }
-
+        
+        stage('Determine Tag') {
+            steps {
+                script {
+                    // Controlla se il branch è "main", se sì, usa "latest"
+                    def tag = ''
+                    if (GIT_BRANCH_NAME == 'main') {
+                        tag = "latest"
+                    } else {
+                        // Per altre branch, usa il nome del branch
+                        tag = "${GIT_BRANCH_NAME}-${env.GIT_COMMIT.take(7)}"
+                    }
+                    // Imposta il tag Docker
+                    echo "Using Docker image tag: ${tag}"
+                    env.DOCKER_TAG = tag
+                }
+            }
+        }
+        
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build dell'immagine principale
-                    sh "docker build -t ${DOCKER_REPO}:${env.IMAGE_TAG} ."
+                    // Costruisci l'immagine Docker con il tag corretto
+                    sh "docker build -t lucacisotto/flask-app-example:${env.DOCKER_TAG} ."
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
-                        // Login Docker
-                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin"
-
-                        // Push del tag principale
-                        sh "docker push ${DOCKER_REPO}:${env.IMAGE_TAG}"
+                        // Login su Docker
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                        // Push dell'immagine Docker
+                        sh "docker push lucacisotto/flask-app-example:${env.DOCKER_TAG}"
                     }
                 }
             }
