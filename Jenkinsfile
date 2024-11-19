@@ -15,7 +15,24 @@ pipeline {
                 script {
                     def branch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     def commitSha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                    env.TAG = "${branch}-${commitSha}"
+
+                    // Recupero l'eventuale tag del commit
+                    def commitTag = sh(script: "git describe --tags --exact-match", returnStdout: true).trim()
+
+                    if (commitTag) {
+                        // Se il commit ha un tag, uso quel tag
+                        env.TAG = commitTag
+                    } else if (branch == 'main') {
+                        // Se siamo nel branch 'main', uso 'latest'
+                        env.TAG = 'latest'
+                    } else if (branch == 'develop') {
+                        // Se siamo nel branch 'develop', uso 'develop-<sha>'
+                        env.TAG = "develop-${commitSha}"
+                    } else {
+                        // In tutti gli altri branch, uso '<branch>-<sha>'
+                        env.TAG = "${branch}-${commitSha}"
+                    }
+
                     echo "Using tag: ${env.TAG}"
                 }
             }
