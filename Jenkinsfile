@@ -16,8 +16,13 @@ pipeline {
                     def branch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     def commitSha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
 
-                    // Recupero l'eventuale tag del commit
-                    def commitTag = sh(script: "git describe --tags --exact-match", returnStdout: true).trim()
+                    // Recupero l'eventuale tag del commit, gestendo l'errore se non esiste
+                    def commitTag = ''
+                    try {
+                        commitTag = sh(script: "git describe --tags --exact-match", returnStdout: true).trim()
+                    } catch (Exception e) {
+                        commitTag = ''
+                    }
 
                     if (commitTag) {
                         // Se il commit ha un tag, uso quel tag
