@@ -52,8 +52,8 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 
 1. Vai su Gestisci Jenkins > Credenziali > System > Credenziali globali.
 2. Clicca su Add Credentials e aggiungi:
-- ID github_credentials: i tuoi username e password di GitHub.
-- ID dockerhub_credentials: i tuoi username e password di Docker Hub.
+- ID github_credentials: i tuoi nome utente e password di GitHub.
+- ID dockerhub_credentials: i tuoi nome utente e password di Docker Hub.
 
 ### Configurazione del repository GitHub
 
