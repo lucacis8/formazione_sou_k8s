@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "lucacisotto/flask-app-example"
-        DOCKER_TAG = "v1.0"
+        DOCKER_TAG = "" // Sarà determinato dinamicamente
     }
 
     stages {
@@ -16,10 +16,28 @@ pipeline {
         stage('Determine Tag') {
             steps {
                 script {
-                    // Usa git per determinare il tag
-                    def tag = sh(script: "git describe --tags", returnStdout: true).trim()
-                    env.DOCKER_TAG = tag
-                    echo "Building Docker image with tag: ${env.DOCKER_TAG}"
+                    // Usa git per determinare il tag o il branch
+                    def gitBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def isTag = sh(script: "git describe --exact-match --tags || echo ''", returnStdout: true).trim()
+
+                    // Determina il tag Docker in base al tipo di build
+                    if (isTag) {
+                        // Se è un tag Git, usa il tag come tag Docker
+                        env.DOCKER_TAG = isTag
+                        echo "Building Docker image with tag (from Git tag): ${env.DOCKER_TAG}"
+                    } else if (gitBranch == "master") {
+                        // Se è il branch master, usa "latest"
+                        env.DOCKER_TAG = "latest"
+                        echo "Building Docker image with tag (from master branch): ${env.DOCKER_TAG}"
+                    } else if (gitBranch == "develop") {
+                        // Se è il branch develop, usa "develop-<sha>"
+                        def sha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                        env.DOCKER_TAG = "develop-${sha}"
+                        echo "Building Docker image with tag (from develop branch): ${env.DOCKER_TAG}"
+                    } else {
+                        // Se non è un tag né un branch supportato, lancia un errore
+                        error("Unsupported branch or tag: ${gitBranch}")
+                    }
                 }
             }
         }
@@ -27,7 +45,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Costruisci l'immagine Docker
+                    // Costruisci l'immagine Docker con il tag determinato
                     sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
