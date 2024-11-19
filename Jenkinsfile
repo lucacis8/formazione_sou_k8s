@@ -8,24 +8,30 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                script {
+                    // Verifica il nome del branch e forzalo a fare il checkout del branch giusto
+                    def branch = env.BRANCH_NAME
+                    echo "Current branch: ${branch}"
+                    
+                    // Checkout del branch corretto
+                    sh 'git checkout ${branch}'
+                }
             }
         }
         
         stage('Determine Tag') {
             steps {
                 script {
-                    // Ottieni il nome del branch
-                    def branch = env.BRANCH_NAME
+                    // Ottieni l'ID del commit
                     def sha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    
+
                     // Imposta il tag
                     if (branch == 'develop') {
                         env.DOCKER_TAG = "develop-${sha}"
                     } else {
                         env.DOCKER_TAG = "latest"
                     }
-                    
+
                     echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                 }
             }
