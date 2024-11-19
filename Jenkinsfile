@@ -1,53 +1,57 @@
 pipeline {
     agent any
+    
     environment {
-        DOCKER_IMAGE = 'lucacisotto/flask-app-example'
+        DOCKER_IMAGE = 'lucacisotto/flask-app-example' // Nome dell'immagine Docker
     }
+    
     stages {
         stage('Checkout SCM') {
             steps {
                 checkout scm
             }
         }
+        
         stage('Determine Tag') {
             steps {
                 script {
-                    // Estrai il tag associato al commit corrente
-                    def tags = sh(script: "git tag --points-at HEAD", returnStdout: true).trim()
-                    if (tags) {
-                        env.DOCKER_TAG = tags // Usa il tag associato al commit
+                    // Ottieni il nome del branch
+                    def branch = env.BRANCH_NAME
+                    def sha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    
+                    // Imposta il tag
+                    if (branch == 'develop') {
+                        env.DOCKER_TAG = "develop-${sha}"
                     } else {
-                        env.DOCKER_TAG = "latest" // Se non ci sono tag, usa latest
+                        env.DOCKER_TAG = "latest"
                     }
-                    echo "Tags associated with current commit: ${tags}"
+                    
                     echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                 }
             }
         }
+        
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Costruisci l'immagine Docker con il tag corretto
-                    sh "docker build -t ${DOCKER_IMAGE}:${env.DOCKER_TAG} ."
+                    // Costruisci l'immagine Docker con il tag calcolato
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
+        
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     script {
-                        // Login a Docker Hub
-                        sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"
-                        // Pusha l'immagine Docker con il tag corretto
-                        sh "docker push ${DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        // Esegui il login su DockerHub
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                        
+                        // Push dell'immagine Docker con il tag
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
             }
-        }
-    }
-    post {
-        always {
-            cleanWs()
         }
     }
 }
