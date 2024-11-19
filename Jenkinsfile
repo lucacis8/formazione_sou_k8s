@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "lucacisotto/flask-app-example"
-        DOCKER_TAG = "v1.0"  // Default tag, verrà sovrascritto successivamente
+        DOCKER_TAG = "latest"  // Default tag, verrà sovrascritto successivamente
     }
 
     stages {
@@ -24,8 +24,8 @@ pipeline {
                         // Se è un tag Git, usa il tag per l'immagine Docker
                         env.DOCKER_TAG = isTag
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
-                    } else if (gitBranch == "master") {
-                        // Se è il branch master, usa "latest" come tag
+                    } else if (gitBranch == "main") {
+                        // Se è il branch main, usa "latest" come tag
                         env.DOCKER_TAG = "latest"
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     } else if (gitBranch == "develop") {
@@ -34,7 +34,10 @@ pipeline {
                         env.DOCKER_TAG = "develop-${sha}"
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     } else {
-                        error("Unsupported branch or tag: ${gitBranch}")
+                        // Se non è un tag né un branch conosciuto, usa SHA del commit
+                        def sha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                        env.DOCKER_TAG = "unknown-${sha}"
+                        echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     }
                 }
             }
