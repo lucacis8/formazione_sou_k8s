@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "lucacisotto/flask-app-example-build"
+        DOCKER_IMAGE = "lucacisotto/flask-app-example"
         DOCKER_TAG = "v1.0"
     }
 
