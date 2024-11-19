@@ -28,8 +28,8 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 3. Accedi alla dashboard di Jenkins su http://localhost:8080 e inserisci la password.
 
 4. Durante la configurazione iniziale:
-- Salta la configurazione dell’utente amministratore.
 - Installa i plugin suggeriti.
+- Salta la configurazione dell’utente amministratore.
 
 ### Installazione di Docker all’interno di Jenkins
 
