@@ -1,6 +1,6 @@
 # Esercizio - Pipeline CI/CD con Jenkins e Docker
 
-Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **Jenkins**, **Docker** e una semplice applicazione Flask. La pipeline consente di costruire, taggare e pubblicare un'immagine Docker su **Docker Hub**. Inoltre, viene spiegato come eseguire manualmente l'immagine per verificare che l'applicazione funzioni.
+Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **Jenkins**, **Docker** e una semplice applicazione Flask. La pipeline consente di costruire, taggare e pubblicare un'immagine Docker su **Docker Hub**. Inoltre, viene spiegato come eseguire manualmente l'immagine per verificare che l'applicazione funzioni
 
 ## Requisiti
 
