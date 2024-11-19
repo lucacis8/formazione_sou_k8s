@@ -9,38 +9,40 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {
-                // Checkout del repository Git e recupero dei tag remoti
-                checkout scm
-                // Assicurati di recuperare anche i tag remoti
-                sh "git fetch --tags"
+                script {
+                    // Checkout del repository Git
+                    checkout scm
+                    // Recuperiamo tutti i tag
+                    sh "git fetch --tags"
+                }
             }
         }
 
         stage('Determine Tag') {
             steps {
                 script {
-                    // Determina il branch corrente
-                    def gitBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    
-                    // Controlla se il commit ha un tag esatto
+                    // Controlla se siamo su un tag
                     def tags = sh(script: "git tag --points-at HEAD", returnStdout: true).trim()
+                    def gitBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def sha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
 
+                    echo "Current branch: ${gitBranch}"
+                    echo "Tags associated with current commit: ${tags}"
+
+                    // Se siamo su un tag, usiamo il tag
                     if (tags) {
-                        // Se il commit è associato a un tag, usa quel tag
                         env.DOCKER_TAG = tags
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     } else if (gitBranch == "main") {
-                        // Se siamo sul branch main, usa "latest"
+                        // Se siamo su main, usa latest
                         env.DOCKER_TAG = "latest"
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     } else if (gitBranch == "develop") {
-                        // Se siamo sul branch develop, usa "develop" + sha
-                        def sha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                        // Se siamo su develop, usa develop + sha
                         env.DOCKER_TAG = "develop-${sha}"
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     } else {
-                        // Se non è un tag né un branch conosciuto, usa SHA del commit
-                        def sha = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                        // Se non c'è tag e non siamo su main o develop, usa la sha
                         env.DOCKER_TAG = "unknown-${sha}"
                         echo "Building Docker image with tag: ${env.DOCKER_TAG}"
                     }
