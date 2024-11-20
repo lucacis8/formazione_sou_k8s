@@ -1,0 +1,61 @@
+# Definizione dei valori di base per flask-app-chart
+
+# Numero di repliche per il deploy
+replicaCount: 2
+
+# Configurazione dell'immagine Docker per l'applicazione
+image:
+  repository: lucacisotto/flask-app-example  # Repository dell'immagine
+  pullPolicy: IfNotPresent                   # Politica di pull dell'immagine
+  tag: "latest"                              # Tag dell'immagine (modificabile in fase di rilascio)
+
+# Se desideri utilizzare un'immagine privata, aggiungi i secrets qui (opzionale)
+imagePullSecrets: []
+
+# Configurazione del Service (porta e tipo)
+service:
+  type: ClusterIP      # Tipo di servizio (ClusterIP, NodePort, LoadBalancer, etc.)
+  port: 80             # Porta esposta dal servizio
+
+# Configurazione Ingress (se abilitato, esponi l'app tramite un Ingress Controller)
+ingress:
+  enabled: false       # Disabilitato di default
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []              # Configura TLS se necessario
+
+# Liveness e Readiness Probes per monitorare la salute dell'app
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+# Impostazioni per l'autoscaling (disabilitato di default)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+# Altri valori configurabili per risorse, volume e altre impostazioni (opzionale)
+resources: {}
+volumes: []
+volumeMounts: []
+
+# Impostazioni di sicurezza e context (opzionale)
+securityContext: {}
+podSecurityContext: {}
+
+# Impostazioni di affinità per il pod (opzionale)
+affinity: {}
+nodeSelector: {}
+tolerations: []
