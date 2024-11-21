@@ -61,12 +61,12 @@ Se la pipeline è configurata correttamente, verrà:
 
 1. Sul tuo computer, effettua il pull dell’immagine da Docker Hub:
    ```bash
-   sudo docker pull lucacisotto/flask-app-example:v1.0
+   sudo docker pull lucacisotto/flask-app-example:latest
    ```
 
 2. Esegui l’immagine sulla porta 5000:
    ```bash
-   sudo docker run -p 5000:5000 lucacisotto/flask-app-example:v1.0
+   sudo docker run -p 5000:5000 lucacisotto/flask-app-example:latest
    ```
 
 3. Apri un browser e visita http://localhost:5000. Dovresti vedere il messaggio “hello world”.
