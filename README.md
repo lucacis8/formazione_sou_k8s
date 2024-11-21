@@ -10,11 +10,11 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 
 ## Istruzioni
 
-### Installazione di Docker all’interno di Jenkins
+### Installazione di Docker all’interno di Jenkins Slave
 
-1. Entra nel container Jenkins Master con privilegi sudo:
+1. Entra nel container Jenkins Slave con privilegi sudo:
    ```bash
-   sudo docker exec --user root -it jenkins_master bash
+   sudo docker exec --user root -it jenkins_slave bash
    ```
 
 2. Aggiorna i pacchetti e installa Docker:
