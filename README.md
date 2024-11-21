@@ -4,38 +4,17 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 
 ## Requisiti
 
-1. **Docker** installato sul sistema host.
+1. L'ambiente VM creato nello step 1.
 2. Accesso a un account **GitHub** e **Docker Hub**.
 3. Un repository GitHub con il file `Jenkinsfile` e il codice dell'applicazione (come [formazione_sou_k8s](https://github.com/lucacis8/formazione_sou_k8s)).
 
 ## Istruzioni
 
-### Creazione e configurazione di Jenkins
-1. Crea un container Jenkins con privilegi di root per installare Docker:
-   ```bash
-   sudo docker run -d --name jenkins_master --user root \
-     -p 8080:8080 -p 50000:50000 \
-     -v /var/run/docker.sock:/var/run/docker.sock \
-     -v jenkins_home:/var/jenkins_home \
-     jenkins/jenkins:lts
-   ```
- 
-2. Recupera la password iniziale per accedere alla dashboard di Jenkins:
-   ```bash
-   sudo docker exec jenkins_master cat /var/jenkins_home/secrets/initialAdminPassword
-   ```
-
-3. Accedi alla dashboard di Jenkins su http://localhost:8080 e inserisci la password.
-
-4. Durante la configurazione iniziale:
-- Installa i plugin suggeriti.
-- Salta la configurazione dell’utente amministratore.
-
 ### Installazione di Docker all’interno di Jenkins
 
-1. Entra nel container Jenkins con privilegi sudo:
+1. Entra nel container Jenkins Master con privilegi sudo:
    ```bash
-   sudo docker exec -it jenkins_master bash
+   sudo docker exec --user root -it jenkins_master bash
    ```
 
 2. Aggiorna i pacchetti e installa Docker:
