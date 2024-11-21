@@ -4,7 +4,7 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 
 ## Requisiti
 
-1. L'ambiente VM creato nello step 1.
+1. L'ambiente VM creato nello Step 1.
 2. Accesso a un account **GitHub** e **Docker Hub**.
 3. Un repository GitHub con il file `Jenkinsfile` e il codice dell'applicazione (come [formazione_sou_k8s](https://github.com/lucacis8/formazione_sou_k8s)).
 
