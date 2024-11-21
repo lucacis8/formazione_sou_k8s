@@ -4,13 +4,13 @@
   become: true
 
   tasks:
-    # Aggiorna i pacchetti
+    # Aggiorna tutti i pacchetti
     - name: Aggiorna tutti i pacchetti
       yum:
         name: "*"
         state: latest
 
-    # Installa i prerequisiti per Docker CE
+    # Installa pacchetti necessari
     - name: Installa pacchetti necessari
       yum:
         name:
@@ -20,7 +20,7 @@
           - python3-pip
         state: present
 
-    # Installa la libreria Python 'requests'
+    # Installa il modulo Python 'requests'
     - name: Installa il modulo Python 'requests'
       pip:
         name: requests
@@ -95,20 +95,47 @@
           JENKINS_AGENT_WORKDIR: "/home/jenkins"
           JENKINS_SECRET: "jenkins_secret"  # Sostituisci con la chiave segreta del Master
 
-    # Installazione di K3s
+    # Installa K3s
     - name: Installa K3s
       shell: |
         curl -sfL https://get.k3s.io | sh -
-      args:
-        creates: /usr/local/bin/k3s
 
-    # Verifica che K3s sia stato installato correttamente
+    # Disabilita SELinux
+    - name: Disabilita SELinux
+      shell: |
+        setenforce 0
+        sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
+
+    # Verifica l'installazione di K3s
     - name: Verifica l'installazione di K3s
-      command: k3s --version
+      shell: |
+        systemctl status k3s
 
-    # Creazione del namespace 'formazione-sou' in K3s
-    - name: Crea il namespace 'formazione-sou'
-      command: kubectl create namespace formazione-sou
-      become_user: root
-      environment:
-        KUBEVIRT_KUBEVIRT_KUBECTL: "/usr/local/bin/k3s kubectl"
+    # Copia la configurazione di K3s
+    - name: Copia la configurazione di K3s
+      shell: |
+        mkdir -p ~/.kube
+        cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+        chown $(id -u):$(id -g) ~/.kube/config
+
+    # Imposta la variabile KUBECONFIG
+    - name: Imposta la variabile KUBECONFIG
+      shell: |
+        export KUBECONFIG=~/.kube/config
+
+    # Controlla se il namespace 'formazione-sou' esiste
+    - name: Controlla se il namespace 'formazione-sou' esiste
+      command: /usr/local/bin/k3s kubectl get namespace formazione-sou
+      register: namespace_check
+      failed_when: false
+      changed_when: false
+
+    # Crea il namespace 'formazione-sou' se non esiste
+    - name: Crea il namespace 'formazione-sou' se non esiste
+      command: /usr/local/bin/k3s kubectl create namespace formazione-sou
+      when: namespace_check.rc != 0
+
+    # Imposta il namespace predefinito su 'formazione-sou'
+    - name: Imposta il namespace predefinito su 'formazione-sou'
+      command: /usr/local/bin/k3s kubectl config set-context --current --namespace=formazione-sou
+      when: namespace_check.rc == 0
