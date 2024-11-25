@@ -1,6 +1,18 @@
-# Configurazione di Jenkins Master e Slave su Rocky Linux 9
+# STEP 1 - Configurazione di Jenkins Master e Slave su Rocky Linux 9
 
-Questo progetto automatizza la creazione di un ambiente **Rocky Linux 9** utilizzando **Vagrant** e la configurazione di **Jenkins Master** e **Slave** tramite **Ansible**. 
+Questo progetto automatizza la creazione di un ambiente **Rocky Linux 9** utilizzando **Vagrant** e la configurazione di **Jenkins Master** e **Slave** tramite **Ansible**.
+
+---
+
+## Configurare un Namespace Kubernetes localmente con Minikube (MacBook)
+
+Per eseguire localmente Kubernetes e creare un namespace, seguire questi passaggi:
+
+### Prerequisiti
+- Installare **Minikube** (versione più recente):  
+  ```bash
+  brew install minikube
+  ```
 
 ## Obiettivo
 
