@@ -54,6 +54,8 @@ L'obiettivo di questo progetto è:
 - All'interfaccia web di Jenkins dal browser su [http://localhost:8080](http://localhost:8080).
 - Al servizio remoto del Jenkins Master sulla porta `50000` tramite [http://localhost:50000](http://localhost:50000).
 
+---
+
 ## File del progetto
 
 ### `Vagrantfile`
@@ -80,11 +82,15 @@ Contiene le configurazioni per:
 ### `hosts`
 Definisce l'inventario statico di Ansible, con la VM accessibile tramite l'IP `192.168.56.10`.
 
+---
+
 ## Accesso ai Servizi
 
 Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins come segue:
 - **Interfaccia Web Jenkins Master:** [http://localhost:8080](http://localhost:8080).
 - **Porta remota del Jenkins Master:** [http://localhost:50000](http://localhost:50000).
+
+---
 
 ## Come Usare il Progetto
 
@@ -147,11 +153,14 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 8.	**Verifica che l’agente sia connesso:**
 - Vai su **Gestisci Jenkins > Nodes** e assicurati che il nodo sia connesso.
 
+---
 
 ## Note
 
 - **Assicurati di avere Vagrant e VirtualBox installati sul tuo sistema.**
 - Questo progetto è stato testato su processori **Intel** e potrebbe non funzionare su dispositivi **Apple Silicon ARM**.
+
+---
 
 ## Requisiti
 
@@ -159,6 +168,8 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 - VirtualBox 6.1 o successivo
 - Ansible 2.9 o successivo
 - Connessione a Internet per scaricare le immagini e i pacchetti richiesti.
+
+---
 
 ## Risoluzione dei Problemi
 
