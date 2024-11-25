@@ -4,7 +4,7 @@ Questo progetto automatizza la creazione di un ambiente **Rocky Linux 9** utiliz
 
 ---
 
-## Configurare un Namespace Kubernetes localmente con Minikube (MacBook)
+## Configurare un Namespace Kubernetes Localmente con Minikube (MacBook)
 
 Per eseguire localmente Kubernetes e creare un namespace, seguire questi passaggi:
 
@@ -13,6 +13,33 @@ Per eseguire localmente Kubernetes e creare un namespace, seguire questi passagg
   ```bash
   brew install minikube
   ```
+
+### Avviare Minikube
+
+1. Avviare un cluster Kubernetes locale con Minikube:
+   ```bash
+   minikube start --listen-address='0.0.0.0' --ports='8443:8443'
+   ```
+
+2. Verificare che il cluster sia attivo:
+   ```bash
+   kubectl cluster-info
+   ```
+
+3. Creare il namespace richiesto:
+   ```bash
+   kubectl create namespace formazione-sou
+   ```
+
+4. Controllare il namespace appena creato:
+   ```bash
+   kubectl get namespaces
+   ```
+
+
+Minikube crea un’istanza Kubernetes minimale e locale, utile per test ed esercitazioni.
+
+---
 
 ## Obiettivo
 
@@ -23,7 +50,7 @@ L'obiettivo di questo progetto è:
 4. Configurare un container **Jenkins Master** con porte forwardate per l'accesso locale.
 5. Configurare un container **Jenkins Slave** connesso al Master tramite un IP statico.
 
-Al termine, sarà possibile accedere:
+**Al termine, sarà possibile accedere:**
 - All'interfaccia web di Jenkins dal browser su [http://localhost:8080](http://localhost:8080).
 - Al servizio remoto del Jenkins Master sulla porta `50000` tramite [http://localhost:50000](http://localhost:50000).
 
@@ -32,7 +59,7 @@ Al termine, sarà possibile accedere:
 ### `Vagrantfile`
 Definisce la configurazione della VM:
 - Utilizza la box **Rocky Linux 9**.
-- Configura una rete privata con IP statico `192.168.56.10`.
+- Configura una rete privata con **IP statico** `192.168.56.10`.
 - Abilita il port forwarding per le porte `8080` e `50000` (necessarie per Jenkins).
 - Specifica l'uso di **Ansible** per il provisioning.
 
@@ -40,8 +67,8 @@ Definisce la configurazione della VM:
 Il playbook Ansible esegue le seguenti attività:
 1. Aggiorna i pacchetti e installa i prerequisiti per Docker.
 2. Installa **Docker CE** e avvia il servizio.
-3. Configura una rete Docker personalizzata chiamata `jenkins_network` con un IP statico.
-4. Esegue un container **Jenkins Master** configurato per l'accesso su `localhost:8080` e 'localhost:50000'.
+3. Configura una rete Docker personalizzata chiamata `jenkins_network` con un **IP statico**.
+4. Esegue un container **Jenkins Master** configurato per l'accesso su `localhost:8080` e `localhost:50000`.
 5. Esegue un container **Jenkins Slave**, connesso al Master tramite la rete Docker.
 
 ### `ansible.cfg`
@@ -71,6 +98,7 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
    ```bash
    vagrant up
    ```
+   
 3. **Accedi alla VM:**
    ```bash
    vagrant ssh
@@ -83,7 +111,7 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 
 5.	**Configura Jenkins tramite il browser:**
 - Apri http://localhost:8080 nel browser.
-- Recupera la password di amministratore iniziale accedendo al container 'jenkins_master':
+- Recupera la password di amministratore iniziale accedendo al container `jenkins_master`:
    ```bash
    sudo docker exec jenkins_master cat /var/jenkins_home/secrets/initialAdminPassword
    ```
@@ -94,15 +122,15 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 
 6.	**Configura il nodo agente slave:**
 - Vai su **Gestisci Jenkins > Nodes > New Node**.
-- Inserisci un nome per il nodo (es. 'slave') e seleziona **Agente permanente**.
+- Inserisci un nome per il nodo (es. `slave`) e seleziona **Agente permanente**.
 - Configura i dettagli del nodo:
-- Nome: 'slave'
-- Directory radice remota: '/home/jenkins'
+- Nome: `slave`
+- Directory radice remota: `/home/jenkins`
 - Metodo di avvio: **Avvia l'agente facendolo connettere al master.**
-- Salva il nodo e, nella schermata del nodo appena creato, copia il 'jenkins_secret'.
+- Salva il nodo e, nella schermata del nodo appena creato, copia il `jenkins_secret`.
 
 7.	**Aggiorna il file provision.yml:**
-- Nel file 'provision.yml', sostituisci il valore di 'JENKINS_SECRET' nella sezione env dello Slave con quello copiato:
+- Nel file `provision.yml`, sostituisci il valore di `JENKINS_SECRET` nella sezione env dello Slave con quello copiato:
    ```bash
    env:
      JENKINS_URL: http://172.20.0.2:8080
@@ -135,4 +163,4 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 ## Risoluzione dei Problemi
 
 - **Errore di connessione alla VM:** Assicurati che VirtualBox sia configurato correttamente e che Vagrant utilizzi la versione corretta del provider.
-- **Jenkins non accessibile:** Verifica che i container Docker siano in esecuzione tramite docker ps e controlla eventuali errori nei log.
+- **Jenkins non accessibile:** Verifica che i container Docker siano in esecuzione tramite `docker ps` e controlla eventuali errori nei log.
