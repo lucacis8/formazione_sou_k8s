@@ -29,7 +29,7 @@ Il playbook Ansible esegue le seguenti attività:
 1. Aggiorna i pacchetti e installa i prerequisiti per Docker.
 2. Installa **Docker CE** e avvia il servizio.
 3. Configura una rete Docker personalizzata chiamata `jenkins_network` con un IP statico.
-4. Esegue un container **Jenkins Master** configurato per l'accesso su `localhost:8080` e `localhost:50000`.
+4. Esegue un container **Jenkins Master** configurato per l'accesso su `localhost:8080` e 'localhost:50000'.
 5. Esegue un container **Jenkins Slave**, connesso al Master tramite la rete Docker.
 
 ### `ansible.cfg`
@@ -44,53 +44,53 @@ Definisce l'inventario statico di Ansible, con la VM accessibile tramite l'IP `1
 ## Accesso ai Servizi
 
 Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins come segue:
-- **Interfaccia Web Jenkins Master**: [http://localhost:8080](http://localhost:8080).
-- **Porta remota del Jenkins Master**: [http://localhost:50000](http://localhost:50000).
+- **Interfaccia Web Jenkins Master:** [http://localhost:8080](http://localhost:8080).
+- **Porta remota del Jenkins Master:** [http://localhost:50000](http://localhost:50000).
 
 ## Come Usare il Progetto
 
-1. Clona questo repository sul tuo computer.
+1. **Clona questo repository sul tuo computer.**
    ```bash
    git clone <repository-url>
    cd <repository-folder>
    ```
 
-2. Avvia la VM con Vagrant:
+2. **Avvia la VM con Vagrant:**
    ```bash
    vagrant up
    ```
-3. Accedi alla VM:
+3. **Accedi alla VM:**
    ```bash
    vagrant ssh
    ```
 
-4. Verifica lo stato dei container Docker nella VM:
+4. **Verifica lo stato dei container Docker nella VM:**
    ```bash
    sudo watch docker ps -a
    ```
 
-5.	Configura Jenkins tramite il browser:
+5.	**Configura Jenkins tramite il browser:**
 - Apri http://localhost:8080 nel browser.
-- Recupera la password di amministratore iniziale accedendo al container jenkins_master:
+- Recupera la password di amministratore iniziale accedendo al container 'jenkins_master':
    ```bash
    sudo docker exec jenkins_master cat /var/jenkins_home/secrets/initialAdminPassword
    ```
 
-- Incolla la password nella schermata del browser e segui la procedura guidata.
-- Installa i plugin suggeriti.
-- Continuare come amministratore, saltando la creazione del primo utente amministratore.
+- Incolla la password nella schermata del browser e segui la procedura guidata:
+   - Installa i plugin suggeriti.
+   - Continuare come amministratore, saltando la creazione del primo utente amministratore.
 
-6.	Configura il nodo agente slave:
-- Vai su Gestisci Jenkins > Nodes > New Node.
-- Inserisci un nome per il nodo (es. slave) e seleziona Agente permanente.
+6.	**Configura il nodo agente slave:**
+- Vai su **Gestisci Jenkins > Nodes > New Node**.
+- Inserisci un nome per il nodo (es. 'slave') e seleziona **Agente permanente**.
 - Configura i dettagli del nodo:
-- Nome: slave
-- Directory radice remota: /home/jenkins
-- Metodo di avvio: Avvia l'agente facendolo connettere al master.
-- Salva il nodo e, nella schermata del nodo appena creato, copia il jenkins_secret.
+- Nome: 'slave'
+- Directory radice remota: '/home/jenkins'
+- Metodo di avvio: **Avvia l'agente facendolo connettere al master.**
+- Salva il nodo e, nella schermata del nodo appena creato, copia il 'jenkins_secret'.
 
 7.	**Aggiorna il file provision.yml:**
-- Nel file *provision.yml*, sostituisci il valore di JENKINS_SECRET nella sezione env dello Slave con quello copiato:
+- Nel file 'provision.yml', sostituisci il valore di 'JENKINS_SECRET' nella sezione env dello Slave con quello copiato:
    ```bash
    env:
      JENKINS_URL: http://172.20.0.2:8080
@@ -122,5 +122,5 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 
 ## Risoluzione dei Problemi
 
-- **Errore di connessione alla VM**: Assicurati che VirtualBox sia configurato correttamente e che Vagrant utilizzi la versione corretta del provider.
-- **Jenkins non accessibile**: Verifica che i container Docker siano in esecuzione tramite docker ps e controlla eventuali errori nei log.
+- **Errore di connessione alla VM:** Assicurati che VirtualBox sia configurato correttamente e che Vagrant utilizzi la versione corretta del provider.
+- **Jenkins non accessibile:** Verifica che i container Docker siano in esecuzione tramite docker ps e controlla eventuali errori nei log.
