@@ -11,9 +11,6 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "2048"  # RAM della VM
     vb.cpus = 2         # Numero di CPU
-
-    # Configurazione del disco rigido della VM (20 GB)
-    vb.disk :primary, size: 20480 # Imposta lo spazio su disco a 20 GB (20480 MB)
   end
 
   # Provisioning tramite Ansible
