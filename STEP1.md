@@ -89,8 +89,8 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 - Metodo di avvio: Avvia l'agente facendolo connettere al master.
 - Salva il nodo e, nella schermata del nodo appena creato, copia il jenkins_secret.
 
-7.	Aggiorna il file provision.yml:
-- Nel file provision.yml, sostituisci il valore di JENKINS_SECRET nella sezione env dello Slave con quello copiato:
+7.	**Aggiorna il file provision.yml:**
+- Nel file *provision.yml*, sostituisci il valore di JENKINS_SECRET nella sezione env dello Slave con quello copiato:
    ```bash
    env:
      JENKINS_URL: http://172.20.0.2:8080
@@ -104,14 +104,14 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
    vagrant provision
    ```
 
-8.	Verifica che l’agente sia connesso:
-- Vai su Gestisci Jenkins > Nodes e assicurati che il nodo sia connesso.
+8.	**Verifica che l’agente sia connesso:**
+- Vai su **Gestisci Jenkins > Nodes** e assicurati che il nodo sia connesso.
 
 
 ## Note
 
-- Assicurati di avere Vagrant e VirtualBox installati sul tuo sistema.
-- Questo progetto è stato testato su processori Intel e potrebbe non funzionare su dispositivi Apple Silicon ARM.
+- **Assicurati di avere Vagrant e VirtualBox installati sul tuo sistema.**
+- Questo progetto è stato testato su processori **Intel** e potrebbe non funzionare su dispositivi **Apple Silicon ARM**.
 
 ## Requisiti
 
