@@ -28,6 +28,8 @@ ingress:
       paths:
         - path: /
           pathType: Prefix         # Indica il tipo di percorso
+        - path: /api
+          pathType: Prefix         # Indica il tipo di percorso  
   tls: []               # Configura TLS se necessario
 
 # Liveness e Readiness Probes per monitorare la salute dell'app
