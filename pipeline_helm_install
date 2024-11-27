@@ -1,0 +1,43 @@
+pipeline {
+    agent {
+        label 'slave' // Usa lo slave Jenkins configurato
+    }
+    environment {
+        GIT_REPO = 'https://github.com/lucacis8/formazione_sou_k8s.git' // Repository Git corretto
+        CHART_PATH = 'charts' // Percorso della cartella del chart
+        NAMESPACE = 'formazione-sou' // Namespace Kubernetes
+        KUBECONFIG = '/var/jenkins_home/.kube/config' // Imposta il percorso del kubeconfig
+    }
+    stages {
+        stage('Clona repo da Git') {
+            steps {
+                git branch: 'main', url: "${GIT_REPO}" // Clona il branch main del repository
+            }
+        }
+        stage('Test kubectl connection') {
+            steps {
+                script {
+                    // Imposta il contesto kubectl manualmente
+                    sh 'kubectl config use-context minikube'
+                    sh 'kubectl config current-context'  // Verifica che il contesto sia stato impostato
+                    sh 'kubectl get nodes' // Verifica che i nodi siano raggiungibili
+                }
+            }
+        }
+        stage('Esegui helm install') {
+            steps {
+                script {
+                    sh """
+                    helm upgrade --install formazione-sou ./${CHART_PATH} \
+                        --namespace ${NAMESPACE}
+                    """
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline completata'
+        }
+    }
+}
