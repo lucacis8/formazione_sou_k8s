@@ -93,7 +93,7 @@ Se tutto è configurato correttamente, vedrai l’output relativo al tuo cluster
 #### 3.1. Verifica della connessione su Jenkins
 
 1. Accedi alla dashboard di Jenkins.
-2. Vai al progetto che contiene la pipeline.
+2. Crea la pipeline per eseguire l'Helm Install (è possibile reperirla sempre nella repo formazione_sou_k8s).
 3. Avvia la pipeline dalla dashboard di Jenkins.
 
 #### 3.2. Monitoraggio della Pipeline
