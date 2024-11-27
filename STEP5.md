@@ -52,7 +52,7 @@ Lo script che verrà creato si chiama `check_deployment.sh` ed effettua le segue
 
    Lo script è in questa repo, sia in versione bash che python.
 
-2. **Esegui lo script** nel tuo ambiente (sia che sia nel container Jenkins oppure sul Mac):
+2. **Esegui lo script** nel tuo ambiente (possibile sia nel container Jenkins Slave sia sul Mac):
 
    ```bash
    bash check_deployment.sh
