@@ -9,10 +9,12 @@ spec:
     - host: {{ .Values.ingress.hosts | first | default "formazionesou.local" }}
       http:
         paths:
-          - path: {{ .Values.ingress.hosts | first | .paths | first | .path | default "/" }}
-            pathType: {{ .Values.ingress.hosts | first | .paths | first | .pathType | default "Prefix" }}
+          {{- range .Values.ingress.hosts | first | .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType | default "Prefix" }}
             backend:
               service:
                 name: {{ .Release.Name }}-service
                 port:
                   number: 80
+          {{- end }}
