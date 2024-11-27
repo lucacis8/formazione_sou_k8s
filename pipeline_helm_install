@@ -24,6 +24,27 @@ pipeline {
                 }
             }
         }
+        stage('Check kubectl permissions') {
+            steps {
+                script {
+                    // Verifica se l'utente ha i permessi per creare deploy in Kubernetes
+                    sh 'kubectl auth can-i create deployments --namespace ${NAMESPACE}'
+                }
+            }
+        }
+        stage('Lint Helm charts') {
+            steps {
+                script {
+                    try {
+                        // Esegui linting sui chart
+                        sh 'helm lint ./charts'
+                    } catch (Exception e) {
+                        // Gestisci l'errore, continuando con l'installazione
+                        echo "Helm lint failed, but continuing with installation."
+                    }
+                }
+            }
+        }
         stage('Esegui helm install') {
             steps {
                 script {
