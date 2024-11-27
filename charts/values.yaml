@@ -19,15 +19,16 @@ service:
 
 # Configurazione Ingress (se abilitato, esponi l'app tramite un Ingress Controller)
 ingress:
-  enabled: false       # Disabilitato di default
-  className: ""
-  annotations: {}
+  enabled: true        # Abilitato per il Bonus Track
+  className: "nginx"   # Nginx Ingress Controller
+  annotations: 
+    nginx.ingress.kubernetes.io/rewrite-target: "/"  # Rewrite per il path root
   hosts:
-    - host: chart-example.local
+    - host: formazionesou.local    # Dominio per l'accesso al servizio
       paths:
         - path: /
-          pathType: ImplementationSpecific
-  tls: []              # Configura TLS se necessario
+          pathType: Prefix         # Indica il tipo di percorso
+  tls: []               # Configura TLS se necessario
 
 # Liveness e Readiness Probes per monitorare la salute dell'app
 livenessProbe:
