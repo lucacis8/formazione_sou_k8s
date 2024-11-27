@@ -117,9 +117,9 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 
 5.	**Configura Jenkins tramite il browser:**
 - Apri http://localhost:8080 nel browser.
-- Recupera la password di amministratore iniziale accedendo al container `jenkins-master`:
+- Recupera la password di amministratore iniziale accedendo al container `jenkins_master`:
    ```bash
-   sudo docker exec jenkins-master cat /var/jenkins_home/secrets/initialAdminPassword
+   sudo docker exec jenkins_master cat /var/jenkins_home/secrets/initialAdminPassword
    ```
 
 - Incolla la password nella schermata del browser e segui la procedura guidata:
