@@ -32,12 +32,23 @@ ingress:
 # Liveness e Readiness Probes per monitorare la salute dell'app
 livenessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /healthz      # Path per la Liveness Probe
+    port: 80            # Porta da monitorare
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
 readinessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /readyz       # Path per la Readiness Probe
+    port: 80            # Porta da monitorare
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
 
 # Impostazioni per l'autoscaling (disabilitato di default)
 autoscaling:
@@ -46,12 +57,33 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
 
-# Altri valori configurabili per risorse, volume e altre impostazioni (opzionale)
-resources: {}
+# Risorse: configurazione dei limiti e delle richieste per il pod
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# Volumi e mount (opzionale)
 volumes: []
 volumeMounts: []
 
-# Impostazioni di sicurezza e context (opzionale)
+# Service Account e RBAC
+serviceAccount:
+  create: true                  # Crea un Service Account
+  name: cluster-reader-sa       # Nome del Service Account
+  annotations: {}               # Eventuali annotazioni per il Service Account
+
+rbac:
+  create: true                  # Crea le risorse RBAC (ClusterRoleBinding)
+  roleRefName: cluster-reader   # Nome del ClusterRole da associare
+
+# Namespace per il rilascio
+namespace: formazione-sou
+
+# Impostazioni di sicurezza e context
 securityContext: {}
 podSecurityContext: {}
 
