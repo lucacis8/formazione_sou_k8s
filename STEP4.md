@@ -1,7 +1,8 @@
 # Step 4 - Configurazione e Esecuzione della Pipeline Jenkins con Minikube
 
-## Introduzione
 In questo esercizio, configureremo il **Jenkins Slave** per lavorare con il cluster Kubernetes locale di **Minikube** che avevamo installato sul MacBook all'inizio dello Step 1. Successivamente, installeremo gli strumenti necessari (`kubectl` e `Helm`) sul Jenkins Slave, e ci assicureremo che la pipeline possa eseguire correttamente su Jenkins.
+
+---
 
 ## Requisiti
 - Un cluster **Minikube** in esecuzione su MacBook e il suo namespace `formazione-sou`.
@@ -9,6 +10,8 @@ In questo esercizio, configureremo il **Jenkins Slave** per lavorare con il clus
 - I seguenti strumenti devono essere installati:
   - **kubectl** (per interagire con il cluster Kubernetes).
   - **Helm** (per gestire le release di Kubernetes).
+
+---
 
 ## Passaggi per la configurazione
 
@@ -37,11 +40,9 @@ Esegui i seguenti comandi sul Jenkins Slave per installare `kubectl` e `Helm`:
    helm version
    ```
 
----
+### 2. Configurazione di kubectl per il Jenkins Slave
 
-## 2. Configurazione di kubectl per il Jenkins Slave
-
-### 2.1. Copia dei file di configurazione da Minikube
+#### 2.1. Copia dei file di configurazione da Minikube
 
 1. **Copia il file di configurazione** `config` **e i certificati di Minikube** dal MacBook al Jenkins Slave:
 - Il file di configurazione di kubectl si trova in `~/.kube/config`.
@@ -53,7 +54,7 @@ Esegui i seguenti comandi sul Jenkins Slave per installare `kubectl` e `Helm`:
 - **~/.minikube/client.crt**
 - **~/.minikube/client.key**
 
-### 2.2. Modifica dei percorsi nel file di configurazione
+#### 2.2. Modifica dei percorsi nel file di configurazione
 
 Una volta copiati i file, devi aggiornare i percorsi all’interno del file `config` di Kubernetes per il Jenkins Slave:
 1. Apri il file di configurazione `~/.kube/config` sul Jenkins Slave e modifica i percorsi per i certificati. Assicurati che i percorsi siano corretti in base alla posizione dove hai copiato i file:
@@ -72,7 +73,7 @@ Una volta copiati i file, devi aggiornare i percorsi all’interno del file `con
        client-key: /var/jenkins_home/.minikube/profiles/minikube/client.key
    ```
 
-### 2.3. Esportazione della configurazione
+#### 2.3. Esportazione della configurazione
 
 1. Dopo aver aggiornato il file di configurazione, esegui il seguente comando per esportare la configurazione di `kubectl`:
    ```bash
@@ -87,15 +88,15 @@ Una volta copiati i file, devi aggiornare i percorsi all’interno del file `con
 
 Se tutto è configurato correttamente, vedrai l’output relativo al tuo cluster Minikube.
 
-## 3. Verifica e avvio della Pipeline su Jenkins
+### 3. Verifica e avvio della Pipeline su Jenkins
 
-### 3.1. Verifica della connessione su Jenkins
+#### 3.1. Verifica della connessione su Jenkins
 
 1. Accedi alla dashboard di Jenkins.
 2. Vai al progetto che contiene la pipeline.
 3. Avvia la pipeline dalla dashboard di Jenkins.
 
-### 3.2. Monitoraggio della Pipeline
+#### 3.2. Monitoraggio della Pipeline
 
 La pipeline dovrebbe eseguire i seguenti passaggi:
 - Clonare il repository Git contenente il progetto.
@@ -104,7 +105,7 @@ La pipeline dovrebbe eseguire i seguenti passaggi:
 
 Assicurati che l’output della pipeline mostri che l’installazione è stata completata con successo e che l’applicazione è stata distribuita correttamente.
 
-### 3.3. Verifica dello stato dell’applicazione
+#### 3.3. Verifica dello stato dell’applicazione
 
 1. Dopo aver eseguito la pipeline, verifica che il rilascio di Helm sia stato eseguito correttamente:
    ```bash
@@ -115,6 +116,6 @@ Assicurati che l’output della pipeline mostri che l’installazione è stata c
 
 2. Se tutto è stato eseguito correttamente, dovresti vedere i pod in esecuzione e il servizio esposto per l’accesso.
 
-## Conclusioni
+### Conclusioni
 
 Questo esercizio ti ha guidato attraverso la configurazione del Jenkins Slave per lavorare con Minikube e l’esecuzione di una pipeline di Helm. Assicurati che tutti gli strumenti siano correttamente installati e configurati e che la pipeline possa essere eseguita senza problemi per distribuire correttamente l’applicazione nel cluster Kubernetes.
