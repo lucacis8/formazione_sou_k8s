@@ -9,6 +9,9 @@ image:
   pullPolicy: IfNotPresent                   # Politica di pull dell'immagine
   tag: "latest"                              # Tag dell'immagine (modificabile in fase di rilascio)
 
+# Se desideri utilizzare un'immagine privata, aggiungi i secrets qui (opzionale)
+imagePullSecrets: []
+
 # Configurazione del Service (porta e tipo)
 service:
   type: ClusterIP      # Tipo di servizio (ClusterIP, NodePort, LoadBalancer, etc.)
