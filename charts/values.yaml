@@ -36,7 +36,7 @@ ingress:
 livenessProbe:
   httpGet:
     path: /healthz      # Path per la Liveness Probe
-    port: 80            # Porta da monitorare
+    port: 5000            # Porta da monitorare
   initialDelaySeconds: 10
   periodSeconds: 15
   timeoutSeconds: 5
@@ -46,7 +46,7 @@ livenessProbe:
 readinessProbe:
   httpGet:
     path: /readyz       # Path per la Readiness Probe
-    port: 80            # Porta da monitorare
+    port: 5000            # Porta da monitorare
   initialDelaySeconds: 5
   periodSeconds: 10
   timeoutSeconds: 5
