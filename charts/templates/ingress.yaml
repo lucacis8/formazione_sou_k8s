@@ -6,11 +6,11 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: {{ .Values.ingress.hosts[0].host }}
+  - host: {{ .Values.ingress.hosts | first | default "default.local" }}
     http:
       paths:
-      - path: {{ .Values.ingress.hosts[0].paths[0].path }}
-        pathType: {{ .Values.ingress.hosts[0].paths[0].pathType }}
+      - path: {{ .Values.ingress.hosts | first | .paths | first | .path | default "/" }}
+        pathType: {{ .Values.ingress.hosts | first | .paths | first | .pathType | default "Prefix" }}
         backend:
           service:
             name: {{ .Release.Name }}-service
