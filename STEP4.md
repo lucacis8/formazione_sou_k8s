@@ -96,6 +96,7 @@ Una volta copiati i file, devi aggiornare i percorsi all’interno del file `con
    ```bash
    kubectl config current-context
    kubectl get nodes
+   kubectl get namespace
    ```
 
 Se tutto è configurato correttamente, vedrai l’output relativo al tuo cluster Minikube.
