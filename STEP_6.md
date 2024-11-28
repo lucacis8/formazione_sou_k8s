@@ -27,30 +27,6 @@ In questo esercizio, l'obiettivo è configurare un **Ingress Controller Nginx** 
 
 - **`ingress.yaml`**: Il file di configurazione Ingress per il servizio Flask è situato nella directory `/charts/templates` del progetto. Questo file definisce come il traffico HTTP deve essere instradato verso il servizio Flask.
 
-   Esempio di configurazione Ingress:
-   ```yaml
-   apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: flask-app-ingress
-  namespace: formazione-sou
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: formazionesou.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: formazione-sou-service
-            port:
-              number: 80
-   ```
-
 ### Come testare l’esercizio
 
 1. **Verifica l’Ingress Controller:**
