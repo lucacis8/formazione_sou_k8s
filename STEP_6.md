@@ -30,22 +30,25 @@ In questo esercizio, l'obiettivo è configurare un **Ingress Controller Nginx** 
    Esempio di configurazione Ingress:
    ```yaml
    apiVersion: networking.k8s.io/v1
-   kind: Ingress
-   metadata:
-     name: ingress-myservicea
-   spec:
-     rules:
-     - host: formazionesou.local
-       http:
-         paths:
-         - path: /
-           pathType: Prefix
-           backend:
-             service:
-               name: formazionesou-service
-               port:
-                 number: 80
-   ingressClassName: nginx
+kind: Ingress
+metadata:
+  name: flask-app-ingress
+  namespace: formazione-sou
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: formazionesou.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: formazione-sou-service
+            port:
+              number: 80
    ```
 
 ### Come testare l’esercizio
