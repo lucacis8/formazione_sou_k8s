@@ -48,11 +48,23 @@ Esegui i seguenti comandi sul Jenkins Slave per installare `kubectl` e `Helm`:
 - Il file di configurazione di kubectl si trova in `~/.kube/config`.
 - I certificati di Minikube si trovano nella cartella `~/.minikube/`.
 
-2. Trasferisci i seguenti file dal MacBook al Jenkins Slave:
+2. Copia i seguenti file del Mac e incollali nel Jenkins Slave:
 - **~/.kube/config**
+   ```bash
+   cat .kube/config
+   ```
 - **~/.minikube/ca.crt**
+   ```bash
+   cat .minikube/ca.crt
+   ```
 - **~/.minikube/client.crt**
+   ```bash
+   cat .minikube/client.crt
+   ```
 - **~/.minikube/client.key**
+   ```bash
+   cat .minikube/client.key
+   ```
 
 #### 2.2. Modifica dei percorsi nel file di configurazione
 
