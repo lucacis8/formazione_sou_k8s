@@ -6,6 +6,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx  # Specifica l'IngressClass
   rules:
   - host: formazionesou.local
     http:
@@ -14,6 +15,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: flask-app-service
+            name: formazione-sou-service  # Nome del servizio corretto
             port:
               number: 80
