@@ -6,7 +6,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx  # Specifica l'IngressClass
+  ingressClassName: nginx
   rules:
   - host: formazionesou.local
     http:
@@ -15,6 +15,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: formazione-sou-service  # Nome del servizio corretto
+            name: formazione-sou-service
             port:
               number: 80
