@@ -1,4 +1,4 @@
-# STEP 2 - Pipeline CI/CD con Jenkins e Docker
+# Step 2 - Pipeline Jenkins dichiarativa (Groovy) per build immagine Docker
 
 Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **Jenkins**, **Docker** e una semplice applicazione Flask. La pipeline consente di costruire, taggare e pubblicare un'immagine Docker su **Docker Hub**. Inoltre, viene spiegato come eseguire manualmente l'immagine per verificare che l'applicazione funzioni.
 
