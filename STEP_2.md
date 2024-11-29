@@ -25,7 +25,7 @@ Questo esercizio guida alla configurazione di una pipeline CI/CD utilizzando **J
 
 2. Installa Docker all'interno del container:
    ```bash
-   apt-get update && apt-get install -y docker.io
+   apt update && apt install docker.io
    ```
 3. Verifica l'installazione:
    ```bash
