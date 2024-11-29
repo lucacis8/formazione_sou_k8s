@@ -1,4 +1,4 @@
-# STEP 1 - Configurazione di Jenkins Master e Slave su Rocky Linux 9
+# Step 1 - Workstation Mac
 
 Questo progetto automatizza la creazione di un ambiente **Rocky Linux 9** utilizzando **Vagrant** e la configurazione di **Jenkins Master** e **Slave** tramite **Ansible**.
 
