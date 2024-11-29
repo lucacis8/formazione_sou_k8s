@@ -1,4 +1,4 @@
-# Step 4 - Configurazione ed esecuzione della Pipeline Jenkins con Minikube
+# Step 4 - Helm Install
 
 In questo esercizio, configureremo il **Jenkins Slave** per lavorare con il cluster Kubernetes locale di **Minikube** che avevamo installato sul Mac all'inizio dello Step 1. Successivamente, installeremo gli strumenti necessari (`kubectl` e `Helm`) sul Jenkins Slave, e ci assicureremo che la pipeline possa eseguire correttamente su Jenkins.
 
