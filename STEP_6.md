@@ -46,7 +46,7 @@ Questo comando dovrebbe restituire la risposta “hello world” dall’applicaz
 3. **Configurazione del DNS locale:**
 Se il dominio `formazionesou.local` non è risolvibile, aggiungi il mapping nel file `/etc/hosts`:
    ```bash
-   sudo vim /etc/hosts
+   vim /etc/hosts
    ```
 
 Aggiungi la riga:
