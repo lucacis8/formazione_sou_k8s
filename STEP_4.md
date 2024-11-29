@@ -66,6 +66,11 @@ Esegui i seguenti comandi sul Jenkins Slave per installare `kubectl` e `Helm`:
    cat .minikube/profiles/minikube/client.key
    ```
 
+Per modificare i file all'interno del Jenkins Slave, installare `vim`:
+   ```bash
+   apt install vim
+   ```
+
 #### 2.2. Modifica dei percorsi nel file di configurazione
 
 Una volta copiati i file, devi aggiornare i percorsi all’interno del file `config` di Kubernetes per il Jenkins Slave:
