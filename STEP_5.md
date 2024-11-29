@@ -23,7 +23,7 @@ Se uno o più di questi elementi non sono configurati, lo script restituirà un 
 3. **Installazione di `jq`**
    - Lo script utilizza `jq` per processare l'output JSON di `kubectl`. Se non hai `jq` installato nel tuo ambiente (per esempio, nel container Jenkins Slave), esegui il comando:
      ```bash
-     apt-get install jq
+     apt install jq
      ```
 
 ## Creazione dello Script
