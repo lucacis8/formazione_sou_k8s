@@ -59,11 +59,11 @@ Esegui i seguenti comandi sul Jenkins Slave per installare `kubectl` e `Helm`:
    ```
 - **~/.minikube/client.crt**
    ```bash
-   cat .minikube/client.crt
+   cat .minikube/profiles/minikube/client.crt
    ```
 - **~/.minikube/client.key**
    ```bash
-   cat .minikube/client.key
+   cat .minikube/profiles/minikube/client.key
    ```
 
 #### 2.2. Modifica dei percorsi nel file di configurazione
