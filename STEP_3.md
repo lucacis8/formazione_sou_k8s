@@ -1,4 +1,4 @@
-# STEP 3 - Helm Chart
+# Step 3 - Helm Chart
 
 ## Descrizione
 
