@@ -51,7 +51,7 @@ Se il dominio `formazionesou.local` non è risolvibile, aggiungi il mapping nel 
 
 Aggiungi la riga:
    ```bash
-   192.168.64.4 formazionesou.local
+   <minikube ip> formazionesou.local
    ```
 
 Questo mapping permette di risolvere `formazionesou.local` all’indirizzo IP del nodo Minikube.
