@@ -35,7 +35,16 @@ Per eseguire localmente Kubernetes e creare un namespace, seguire questi passagg
    ```bash
    kubectl get namespaces
    ```
+   
+5. Imposta `formazione-sou` come namespace di default:
+   ```bash
+   kubectl config set-context --current --namespace=formazione-sou
+   ```
 
+6. Verifica il namespace predefinito:
+   ```bash
+   kubectl config view --minify | grep namespace:
+   ```
 
 Minikube crea un’istanza Kubernetes minimale e locale, utile per test ed esercitazioni.
 
