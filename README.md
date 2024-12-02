@@ -93,4 +93,4 @@ Questa repository **formazione_sou_k8s** contiene tutti i file creati durante l'
 
 ## Conclusione
 
-Questo repository è strettamente legato alla Track 2 dell'Academy. Il suo scopo è fornire una guida pratica e una base di partenza per implementare un ambiente CI/CD con Kubernetes, utilizzando tecnologie come Jenkins, Docker, Helm, e altre pratiche di gestione delle applicazioni moderne.
+Questa repository è strettamente legata alla Track 2 dell'Academy. Il suo scopo è fornire una guida pratica e una base di partenza per implementare un ambiente CI/CD con Kubernetes, utilizzando tecnologie come Jenkins, Docker, Helm, e altre pratiche di gestione delle applicazioni moderne.
