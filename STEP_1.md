@@ -105,8 +105,8 @@ Dopo aver eseguito il provisioning, è possibile accedere ai servizi Jenkins com
 
 1. **Clona questo repository sul tuo computer.**
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/lucacis8/formazione_sou_k8s
+   cd formazione_sou_k8s
    ```
 
 2. **Avvia la VM con Vagrant:**
